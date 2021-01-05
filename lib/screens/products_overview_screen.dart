@@ -28,7 +28,7 @@ class ProductOverviewScreen extends StatelessWidget {
           itemBuilder: (ctx, i) => ProductItem(
             //passing data to Product_item widget
             loadedProduct[i].id,
-            loadedProduct[i].description,
+            loadedProduct[i].title,
             loadedProduct[i].imageUrl,
           ),
           itemCount: loadedProduct.length,
