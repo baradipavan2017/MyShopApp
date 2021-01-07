@@ -20,6 +20,7 @@ class ProductItem extends StatelessWidget {
               ProductDetailScreen.routeName,
               arguments: id,
             );
+            print(id);
           },
           child: Image.network(
             imageUrl,
