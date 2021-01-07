@@ -13,7 +13,7 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //using provider class to send data
-    final product = Provider.of<Product>(context,);
+    final product = Provider.of<Product>(context);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
