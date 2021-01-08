@@ -1,9 +1,9 @@
 // GridTiles are made here and data is passed from here to product screen
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:myshop/providers/product.dart';
-import 'package:myshop/screens/product_detail_screen.dart';
+import '../providers/product.dart';
+import '../screens/product_detail_screen.dart';
+import '../providers/cart.dart';
 
 class ProductItem extends StatelessWidget {
   // final String id;
@@ -14,6 +14,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     //using provider class to send data
     final product = Provider.of<Product>(context, listen: false);
+    final cart = Provider.of<Cart>(context, listen: false);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -48,7 +49,9 @@ class ProductItem extends StatelessWidget {
             builder: (ctx, product, _) => IconButton(
               icon: Icon(Icons.shopping_cart),
               color: Theme.of(context).accentColor,
-              onPressed: () {},
+              onPressed: () {
+                cart.addItem(product.id, product.price, product.title);
+              },
             ),
           ),
           title: Text(

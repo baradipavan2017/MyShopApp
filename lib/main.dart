@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import './screens/products_overview_screen.dart';
 import './screens/product_detail_screen.dart';
 import './providers/products.dart';
+import './providers/cart.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,8 +14,15 @@ class MyApp extends StatelessWidget {
     // using .value can help to reduce the code
     //changenotifierdata helps you to cleanup your data after using thr page
     //which helps in reducing the usage of memory
-    return ChangeNotifierProvider.value(
-      value: Products(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create:(ctx) => Products(),
+        ),
+        ChangeNotifierProvider(
+          create:(ctx) => Cart(),
+        ),
+      ],
       // create: (ctx) => Products(),
       child: MaterialApp(
         title: 'MyShop',
