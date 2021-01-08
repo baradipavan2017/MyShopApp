@@ -13,9 +13,9 @@ class MyApp extends StatelessWidget {
     // using .value can help to reduce the code
     //changenotifierdata helps you to cleanup your data after using thr page
     //which helps in reducing the usage of memory
-    return ChangeNotifierProvider(
-      // value: Products(),
-      create: (ctx) => Products(),
+    return ChangeNotifierProvider.value(
+      value: Products(),
+      // create: (ctx) => Products(),
       child: MaterialApp(
         title: 'MyShop',
         theme: ThemeData(

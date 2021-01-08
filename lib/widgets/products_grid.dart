@@ -5,11 +5,15 @@ import '../providers/products.dart';
 import './product_item.dart';
 
 class ProductGrid extends StatelessWidget {
+  final bool showFavs;
+  ProductGrid(this.showFavs);
+
   @override
   Widget build(BuildContext context) {
     //providing the data to grid using listner
     final productsData = Provider.of<Products>(context);
-    final products = productsData.items;
+    // to check for data favorite or not
+    final products = showFavs ? productsData.favoriteItems : productsData.items;
     return GridView.builder(
       padding: const EdgeInsets.all(8),
       // SilverGridDelegate is used to describe the style and
@@ -25,11 +29,11 @@ class ProductGrid extends StatelessWidget {
         // create: (ctx) =>products[i],
         value: products[i],
         child: ProductItem(
-          //passing data to Product_item widget
-          // products[i].id,
-          // products[i].title,
-          // products[i].imageUrl,
-        ),
+            //passing data to Product_item widget
+            // products[i].id,
+            // products[i].title,
+            // products[i].imageUrl,
+            ),
       ),
       itemCount: products.length,
     );

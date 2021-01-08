@@ -13,26 +13,27 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //using provider class to send data
-    final product = Provider.of<Product>(context,listen: false);
+    final product = Provider.of<Product>(context, listen: false);
     return ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: GridTile(
-          child: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pushNamed(
-                ProductDetailScreen.routeName,
-                arguments: product.id,
-              );
-              print(product.id);
-            },
-            child: Image.network(
-              product.imageUrl,
-              fit: BoxFit.cover,
-            ),
+      borderRadius: BorderRadius.circular(10),
+      child: GridTile(
+        child: GestureDetector(
+          onTap: () {
+            Navigator.of(context).pushNamed(
+              ProductDetailScreen.routeName,
+              arguments: product.id,
+            );
+            print(product.id);
+          },
+          child: Image.network(
+            product.imageUrl,
+            fit: BoxFit.cover,
           ),
-          footer: GridTileBar(
-            backgroundColor: Colors.black87,
-            leading: IconButton(
+        ),
+        footer: GridTileBar(
+          backgroundColor: Colors.black87,
+          leading: Consumer<Product>(
+            builder: (ctx, product, _) => IconButton(
               icon: Icon(
                   product.isFavorite ? Icons.favorite : Icons.favorite_border),
               color: Theme.of(context).accentColor,
@@ -40,21 +41,22 @@ class ProductItem extends StatelessWidget {
                 product.toggleFavoriteStatus();
               },
             ),
-            trailing: Consumer<Product>(
-              // can use 'child' in place of '_' and a child 
-              // can be used in it 
-              builder: (ctx, product, _) => IconButton(
-                icon: Icon(Icons.shopping_cart),
-                color: Theme.of(context).accentColor,
-                onPressed: () {},
-              ),
-            ),
-            title: Text(
-              product.title,
-              textAlign: TextAlign.center,
+          ),
+          trailing: Consumer<Product>(
+            // can use 'child' in place of '_' and a child
+            // can be used in it
+            builder: (ctx, product, _) => IconButton(
+              icon: Icon(Icons.shopping_cart),
+              color: Theme.of(context).accentColor,
+              onPressed: () {},
             ),
           ),
+          title: Text(
+            product.title,
+            textAlign: TextAlign.center,
+          ),
         ),
+      ),
     );
   }
 }
