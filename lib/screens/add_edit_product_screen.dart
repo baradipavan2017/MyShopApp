@@ -10,12 +10,31 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
   //creating focus node
   final _priceFocusNode = FocusNode();
   final _descFocusNode = FocusNode();
+  final _imageUrlController = TextEditingController();
+  final _imageUrlFocusNode = FocusNode();
   @override
-  void dispose() {
-    _priceFocusNode.dispose();
-    _descFocusNode.dispose();
+  void initState() {
+    _imageUrlFocusNode.addListener(_updateImageUrl);
+    super.initState();
   }
 
+  @override
+  void dispose() {
+    _imageUrlFocusNode.removeListener(_updateImageUrl);
+    _priceFocusNode.dispose();
+    _descFocusNode.dispose();
+    _imageUrlController.dispose();
+    _imageUrlFocusNode.dispose();
+    super.dispose();
+  }
+
+  void _updateImageUrl() {
+    if(!_imageUrlFocusNode.hasFocus){
+      setState(() {
+        
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,6 +70,39 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                   FocusScope.of(context).requestFocus(_descFocusNode);
                 },
               ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(labelText: 'Image URL'),
+                      keyboardType: TextInputType.url,
+                      textInputAction: TextInputAction.done,
+                      focusNode: _imageUrlFocusNode,
+                    ),
+                  ),
+                  Container(
+                    width: 100,
+                    height: 100,
+                    margin: EdgeInsets.only(top: 8, right: 10),
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                      width: 1,
+                      color: Colors.grey,
+                    )),
+                    child: Container(
+                      child: _imageUrlController.text.isEmpty
+                          ? Text('Enter a URL')
+                          : FittedBox(
+                              child: Image.network(
+                                _imageUrlController.text,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),
