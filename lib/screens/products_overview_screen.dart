@@ -42,7 +42,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
             },
             itemBuilder: (_) => [
               PopupMenuItem(
-                child: Text('Onlu Favorites'),
+                child: Text('Only Favorites'),
                 value: FilterOptions.Favorites,
               ),
               PopupMenuItem(
