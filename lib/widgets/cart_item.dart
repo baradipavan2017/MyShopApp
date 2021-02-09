@@ -15,7 +15,7 @@ class CartItem extends StatelessWidget {
     return Dismissible(
       key: ValueKey(id),
       onDismissed: (direction) {
-        Provider.of<Cart>(context,listen: false).removeItem(productId);
+        Provider.of<Cart>(context, listen: false).removeItem(productId);
       },
       background: Container(
         // decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
@@ -30,6 +30,31 @@ class CartItem extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 15, vertical: 4),
       ),
       direction: DismissDirection.endToStart,
+      //Creating an alert dialouge box using the direction
+      confirmDismiss: (direction) {
+        //should return a future value such as flse or true
+        return showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('Are you Sure?'),
+            content: Text('Do you want to remove the item from the cart?'),
+            actions: <Widget>[
+              FlatButton(
+                  // returning false and closing the alert dialouge
+                  onPressed: () {
+                    Navigator.of(ctx).pop(false);
+                  },
+                  child: Text('No')),
+              FlatButton(
+                  //returning true and deleting the dismissial
+                  onPressed: () {
+                    Navigator.of(ctx).pop(true);
+                  },
+                  child: Text('Yes')),
+            ],
+          ),
+        );
+      },
       child: Card(
         margin: EdgeInsets.symmetric(
           horizontal: 15,
