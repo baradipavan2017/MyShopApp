@@ -39,11 +39,26 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
 
   void _updateImageUrl() {
     if (!_imageUrlFocusNode.hasFocus) {
+      if (_imageUrlController.text.isEmpty ||
+          (!_imageUrlController.text.startsWith('http') &&
+              !_imageUrlController.text.startsWith('https')) ||
+          (!_imageUrlController.text.endsWith('.png') &&
+              !_imageUrlController.text.endsWith('.jpg') &&
+              !_imageUrlController.text.endsWith('.jpeg'))) {
+        return;
+      }
       setState(() {});
     }
   }
 
   void _saveForm() {
+    //initialize the validator
+    final isValid = _form.currentState.validate();
+    if (!isValid) {
+      //dosen't save if false and returns back
+      return;
+    }
+    //comes here when if case is true
     //saves the form in current state
     _form.currentState.save();
     print(_editedProduct.title);
@@ -86,7 +101,13 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                       imageUrl: _editedProduct.imageUrl,
                       price: _editedProduct.price);
                 },
-                
+                //validating the title
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please provide a value';
+                  }
+                  return null;
+                },
               ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Price'),
@@ -94,6 +115,18 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                 keyboardType: TextInputType.number,
                 //focus target
                 focusNode: _priceFocusNode,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter a price';
+                  }
+                  if (double.tryParse(value) == null) {
+                    return 'Please enter a vaild Number';
+                  }
+                  if (double.parse(value) <= 0) {
+                    return 'Enter a value greater than 0';
+                  }
+                  return null;
+                },
                 onSaved: (value) {
                   _editedProduct = Product(
                       //adding price only in this section as there are no other values
@@ -112,6 +145,15 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_descFocusNode);
                 },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Enter an Description';
+                  }
+                  if (value.length < 10) {
+                    return 'Description should be greater than 10 character\'s';
+                  }
+                  return null;
+                },
                 onSaved: (value) {
                   _editedProduct = Product(
                       //adding descrpiption only in this section as there are no other values
@@ -125,26 +167,6 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  Expanded(
-                    child: TextFormField(
-                      decoration: InputDecoration(labelText: 'Image URL'),
-                      keyboardType: TextInputType.url,
-                      textInputAction: TextInputAction.done,
-                      focusNode: _imageUrlFocusNode,
-                      onFieldSubmitted: (_) {
-                        _saveForm();
-                      },
-                      onSaved: (value) {
-                        _editedProduct = Product(
-                            //adding title only in this section as there are no other values
-                            id: null,
-                            title: _editedProduct.title,
-                            description: _editedProduct.description,
-                            imageUrl: value,
-                            price: _editedProduct.price);
-                      },
-                    ),
-                  ),
                   Container(
                     width: 100,
                     height: 100,
@@ -163,6 +185,42 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                                 fit: BoxFit.cover,
                               ),
                             ),
+                    ),
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(labelText: 'Image URL'),
+                      keyboardType: TextInputType.url,
+                      textInputAction: TextInputAction.done,
+                      controller: _imageUrlController,
+                      focusNode: _imageUrlFocusNode,
+                      onFieldSubmitted: (_) {
+                        _saveForm();
+                      },
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter a URL';
+                        }
+                        if (!value.startsWith('http') &&
+                            !value.startsWith('https')) {
+                          return 'Enter an valid URl';
+                        }
+                        if (!value.endsWith('.png') &&
+                            !value.endsWith('.jpg') &&
+                            !value.endsWith('.jpeg')) {
+                          return 'Enter a valid URl';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _editedProduct = Product(
+                            //adding title only in this section as there are no other values
+                            id: null,
+                            title: _editedProduct.title,
+                            description: _editedProduct.description,
+                            imageUrl: value,
+                            price: _editedProduct.price);
+                      },
                     ),
                   ),
                 ],
