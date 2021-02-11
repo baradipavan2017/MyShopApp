@@ -23,10 +23,42 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     imageUrl: '',
     price: 0,
   );
+  //empty values when editing the product
+  var _initValues = {
+    'title': '',
+    'description': '',
+    'price': '',
+    'imageUrl': '',
+  };
+  var _isInit = true;
   @override
   void initState() {
     _imageUrlFocusNode.addListener(_updateImageUrl);
     super.initState();
+  }
+
+  // using did change dependencies to not to run it everytime the app initializes
+  @override
+  void didChangeDependencies() {
+    //getting to edit product id to edit screen
+    if (_isInit) {
+      final productId = ModalRoute.of(context).settings.arguments as String;
+      // to valuate the productId only to edit
+      if (productId != null) {
+        _editedProduct =
+            Provider.of<Products>(context, listen: false).findById(productId);
+        _initValues = {
+          'title': _editedProduct.title,
+          'description': _editedProduct.description,
+          'price': _editedProduct.price.toString(),
+          // 'imageurl': _editedProduct.imageUrl,
+          'imageUrl': '',
+        };
+        _imageUrlController.text = _editedProduct.imageUrl;
+      }
+    }
+    _isInit = false;
+    super.didChangeDependencies();
   }
 
   @override
@@ -63,11 +95,19 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     //comes here when if case is true
     //saves the form in current state
     _form.currentState.save();
+    if (_editedProduct.id != null) {
+      //passes back when productid is present
+      Provider.of<Products>(context, listen: false)
+          .updateProduct(_editedProduct.id, _editedProduct);
+    } else {
+      // adds the new product when id is not found
+      Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+    }
     print(_editedProduct.title);
     print(_editedProduct.price);
     print(_editedProduct.description);
     print(_editedProduct.imageUrl);
-    Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+
     Navigator.of(context).pop();
   }
 
@@ -90,6 +130,8 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
           child: ListView(
             children: <Widget>[
               TextFormField(
+                //init values shows when edit icon pressed
+                initialValue: _initValues['title'],
                 decoration: InputDecoration(labelText: 'Title'),
                 textInputAction: TextInputAction.next,
                 // when pressed enter the focus changes to the price
@@ -99,7 +141,8 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                 onSaved: (value) {
                   _editedProduct = Product(
                       //adding title only in this section as there are no other values
-                      id: null,
+                      id: _editedProduct.id,
+                      isFavorite: _editedProduct.isFavorite,
                       title: value,
                       description: _editedProduct.description,
                       imageUrl: _editedProduct.imageUrl,
@@ -114,6 +157,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                 },
               ),
               TextFormField(
+                initialValue: _initValues['price'],
                 decoration: InputDecoration(labelText: 'Price'),
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.number,
@@ -134,7 +178,8 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                 onSaved: (value) {
                   _editedProduct = Product(
                       //adding price only in this section as there are no other values
-                      id: null,
+                      id: _editedProduct.id,
+                      isFavorite: _editedProduct.isFavorite,
                       title: _editedProduct.title,
                       description: _editedProduct.description,
                       imageUrl: _editedProduct.imageUrl,
@@ -142,6 +187,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                 },
               ),
               TextFormField(
+                initialValue: _initValues['description'],
                 decoration: InputDecoration(labelText: 'Description'),
                 maxLines: 3,
                 textInputAction: TextInputAction.next,
@@ -161,7 +207,8 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                 onSaved: (value) {
                   _editedProduct = Product(
                       //adding descrpiption only in this section as there are no other values
-                      id: null,
+                      id: _editedProduct.id,
+                      isFavorite: _editedProduct.isFavorite,
                       title: _editedProduct.title,
                       description: value,
                       imageUrl: _editedProduct.imageUrl,
@@ -193,6 +240,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                   ),
                   Expanded(
                     child: TextFormField(
+                      // initialValue:_initValues['imageUrl'],
                       decoration: InputDecoration(labelText: 'Image URL'),
                       keyboardType: TextInputType.url,
                       textInputAction: TextInputAction.done,
@@ -219,7 +267,8 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                       onSaved: (value) {
                         _editedProduct = Product(
                             //adding title only in this section as there are no other values
-                            id: null,
+                            id: _editedProduct.id,
+                            isFavorite: _editedProduct.isFavorite,
                             title: _editedProduct.title,
                             description: _editedProduct.description,
                             imageUrl: value,
