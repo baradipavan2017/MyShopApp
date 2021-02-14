@@ -103,10 +103,6 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
       // adds the new product when id is not found
       Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
     }
-    print(_editedProduct.title);
-    print(_editedProduct.price);
-    print(_editedProduct.description);
-    print(_editedProduct.imageUrl);
 
     Navigator.of(context).pop();
   }
