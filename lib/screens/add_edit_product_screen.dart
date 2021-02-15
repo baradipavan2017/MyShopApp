@@ -86,7 +86,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     }
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     //initialize the validator
     final isValid = _form.currentState.validate();
     if (!isValid) {
@@ -107,30 +107,32 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
         _isLoading = false;
       });
     } else {
-      // adds the new product when id is not found
-      Provider.of<Products>(context, listen: false)
-          .addProduct(_editedProduct)
-          //catches the error from products and shows a dialogue box
-          .catchError((error) {
-       return showDialog<Null>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-                  title: Text('An error Occured !'),
-                  content: Text(error.toString()),
-                  actions: <Widget>[
-                    FlatButton(
-                        onPressed: () {
-                          Navigator.of(ctx).pop();
-                        },
-                        child: Text('Okay'))
-                  ],
-                ));
-      }).then((_) {
+      //using await and async with the add product and to catch errors
+      try {
+        // adds the new product when id is not found
+        await Provider.of<Products>(context, listen: false)
+            .addProduct(_editedProduct);
+      } catch (error) {
+        await showDialog<Null>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('An error Occured !'),
+            content: Text(error.toString()),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                  },
+                  child: Text('Okay'))
+            ],
+          ),
+        );
+      } finally {
         setState(() {
           _isLoading = false;
         });
         Navigator.of(context).pop();
-      });
+      }
     }
   }
 

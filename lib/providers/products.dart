@@ -67,24 +67,28 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> addProduct(Product product) {
+
+  
+  //using async and await
+  Future<void> addProduct(Product product) async {
     //initializing the url with /product folder
     const url =
         'https://myshop-d6854-default-rtdb.firebaseio.com/products.json';
-    //post is to store data in server
-    return http
-        .post(
-      url,
-      //encoding it in json format
-      body: json.encode({
-        'title': product.title,
-        'description': product.description,
-        'imageUrl': product.imageUrl,
-        'price': product.price,
-        'isFavorite': product.isFavorite,
-      }),
-    ) //using future so that the id pasrt is executed and then the data is stored
-        .then((response) {
+    //try catch block to find errors
+    try {
+      //post is to store data in server
+      // await is assigned o repsonse which works similar to then and catch
+      final response = await http.post(
+        url,
+        //encoding it in json format
+        body: json.encode({
+          'title': product.title,
+          'description': product.description,
+          'imageUrl': product.imageUrl,
+          'price': product.price,
+          'isFavorite': product.isFavorite,
+        }),
+      );
       //to know whats in the response
       print(json.decode(response.body));
       final newProduct = Product(
@@ -97,11 +101,10 @@ class Products with ChangeNotifier {
       _items.add(newProduct);
       // _items.insert(0, newProduct); //to insert product at a given value
       notifyListeners();
-      //throws the error to the add/edit page so we can create a dialouge box
-    }).catchError((error) {
+    } catch (error) {
       print(error);
       throw error;
-    });
+    }
   }
 
 //updating the product from edit screen
