@@ -5,6 +5,7 @@ import '../widgets/products_grid.dart';
 import '../widgets/badge.dart';
 import '../providers/cart.dart';
 import '../screens/cart_screen.dart';
+import '../providers/products.dart';
 
 enum FilterOptions {
   Favorites,
@@ -20,7 +21,26 @@ class ProductOverviewScreen extends StatefulWidget {
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   var _showOnluFavorites = false;
-  
+  // Wont work in initState because of provider  use didChangeDepedencies
+  //  put listen to false it will run
+  @override
+  void initState() {
+    // Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    try {
+      Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+    } catch (error) {
+      throw error;
+      print(error);
+    }
+
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,9 +86,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           )
         ],
       ),
-      drawer: AppDrawer(
-
-      ),
+      drawer: AppDrawer(),
       body: new ProductGrid(_showOnluFavorites),
     );
   }

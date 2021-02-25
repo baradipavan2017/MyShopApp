@@ -56,19 +56,6 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-
-  //fetching data from the server
-  Future<void> fetchAndSetProducts() async {
-    const url =
-        'https://myshop-d6854-default-rtdb.firebaseio.com/products.json';
-    try {
-      final response = await http.get(url);
-    } catch (error) {
-      print(error);
-      throw error;
-    }
-  }
-
   //using async and await
   Future<void> addProduct(Product product) async {
     //initializing the url with /product folder
@@ -119,5 +106,19 @@ class Products with ChangeNotifier {
   void deleteProduct(String id) {
     _items.removeWhere((prod) => prod.id == id);
     notifyListeners();
+  }
+
+  //fetching data from the server
+  Future<void> fetchAndSetProducts() async {
+    const url =
+        'https://myshop-d6854-default-rtdb.firebaseio.com/products.json';
+    try {
+      final response = await http.get(url);
+      //to know hows it returns the values from server
+      print(json.decode(response.body));
+    } catch (error) {
+      print(error);
+      throw error;
+    }
   }
 }
