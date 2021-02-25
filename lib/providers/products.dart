@@ -55,20 +55,20 @@ class Products with ChangeNotifier {
   Product findById(String id) {
     return _items.firstWhere((prod) => prod.id == id);
   }
-  // using provider for filters isnt good lol
-  // use a stateful widget
-  // void showFavoritesOnly() {
-  //   _showFavoritesOnly = true;
-  //   notifyListeners();
-  // }
-
-  // void showAll() {
-  //   _showFavoritesOnly = false;
-  //   notifyListeners();
-  // }
 
 
-  
+  //fetching data from the server
+  Future<void> fetchAndSetProducts() async {
+    const url =
+        'https://myshop-d6854-default-rtdb.firebaseio.com/products.json';
+    try {
+      final response = await http.get(url);
+    } catch (error) {
+      print(error);
+      throw error;
+    }
+  }
+
   //using async and await
   Future<void> addProduct(Product product) async {
     //initializing the url with /product folder
