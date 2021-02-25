@@ -21,6 +21,8 @@ class ProductOverviewScreen extends StatefulWidget {
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   var _showOnluFavorites = false;
+  var _isInit = true;
+  var _isLoading = false;
   // Wont work in initState because of provider  use didChangeDepedencies
   //  put listen to false it will run
   @override
@@ -31,13 +33,19 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
 
   @override
   void didChangeDependencies() {
-    try {
-      Provider.of<Products>(context, listen: false).fetchAndSetProducts();
-    } catch (error) {
-      throw error;
-      print(error);
+    if (_isInit) {
+      setState(() {
+        _isLoading = true;
+      });
+      Provider.of<Products>(context, listen: false)
+          .fetchAndSetProducts()
+          .then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
     }
-
+    _isInit = false;
     super.didChangeDependencies();
   }
 
@@ -87,7 +95,11 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         ],
       ),
       drawer: AppDrawer(),
-      body: new ProductGrid(_showOnluFavorites),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ProductGrid(_showOnluFavorites),
     );
   }
 }
