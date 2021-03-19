@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:myshop/screens/add_edit_product_screen.dart';
 import '../widgets/app_drawer.dart';
-import 'package:provider/provider.dart';
+
 import '../providers/products.dart';
 import '../widgets/user_product_item.dart';
 
@@ -9,7 +10,7 @@ class UserProductsScreen extends StatelessWidget {
   static const routeName = '/user-product-screen';
   //function for screen refresh
   Future<void> _refreshProducts(BuildContext context) async {
-    await Provider.of<Products>(context).fetchAndSetProducts();
+    await Provider.of<Products>(context,listen: false).fetchAndSetProducts();
   }
 
   @override
@@ -28,6 +29,7 @@ class UserProductsScreen extends StatelessWidget {
         ],
       ),
       drawer: AppDrawer(),
+      //using refresh indicator to refresh the screeen and fetch products
       body: RefreshIndicator(
         onRefresh: () => _refreshProducts(context),
         child: Padding(
