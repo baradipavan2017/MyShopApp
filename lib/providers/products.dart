@@ -141,8 +141,12 @@ class Products with ChangeNotifier {
       final response = await http.get(url);
       //extrating data from the map
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
-      final List<Product> loadedProducts = [];
+     
       //converting dynamic data to lists
+      if (extractedData == null) {
+        return;
+      }
+       final List<Product> loadedProducts = [];
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
           id: prodId,
