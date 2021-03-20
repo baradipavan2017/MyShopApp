@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import '../providers/products.dart';
 import 'package:provider/provider.dart';
@@ -101,11 +103,8 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     });
     if (_editedProduct.id != null) {
       //passes back when productid is present
-      Provider.of<Products>(context, listen: false)
+      await Provider.of<Products>(context, listen: false)
           .updateProduct(_editedProduct.id, _editedProduct);
-      setState(() {
-        _isLoading = false;
-      });
     } else {
       //using await and async with the add product and to catch errors
       try {
@@ -119,20 +118,28 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
             title: Text('An error Occured !'),
             content: Text(error.toString()),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                   onPressed: () {
                     Navigator.of(ctx).pop();
                   },
-                  child: Text('Okay'))
+                  child: Text('Okay'),
+                  
+                  )
             ],
           ),
         );
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
-        Navigator.of(context).pop();
       }
+      //finally {
+      //     setState(() {
+      //       _isLoading = false;
+      //     });
+      //     Navigator.of(context).pop();
+      //   }
+      // }
+      setState(() {
+        _isLoading = false;
+      });
+      Navigator.of(context).pop();
     }
   }
 

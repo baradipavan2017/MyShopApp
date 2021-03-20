@@ -95,15 +95,43 @@ class Products with ChangeNotifier {
   }
 
 //updating the product from edit screen
-  void updateProduct(String id, Product newProduct) {
+  Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
+      //updating the product using patch using id of the product
+      final url =
+          'https://myshop-d6854-default-rtdb.firebaseio.com/products/$id.json';
+      await http.patch(url,
+          body: json.encode({
+            'title': newProduct.title,
+            'descrption': newProduct.description,
+            'imageUrl': newProduct.imageUrl,
+            'price': newProduct.price,
+          }));
       _items[prodIndex] = newProduct;
       notifyListeners();
     }
   }
 
   void deleteProduct(String id) {
+    final url =
+        'https://myshop-d6854-default-rtdb.firebaseio.com/products/$id.json';
+    //optimistic deletingn
+    final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
+    var existingProduct = _items[existingProductIndex];
+    _items.removeAt(existingProductIndex);
+    notifyListeners();
+    // from server
+    http.delete(url).then((response){
+      if(response.statusCode >= 400){
+        //code for error thrown
+      }
+      existingProduct = null;
+      //replacing the values again if deletion fails
+    }).catchError((_) {
+      _items.insert(existingProductIndex, existingProduct);
+    });
+
     _items.removeWhere((prod) => prod.id == id);
     notifyListeners();
   }
