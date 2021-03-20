@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:myshop/models/http_exeception.dart';
 import 'product.dart';
 
 class Products with ChangeNotifier {
@@ -113,7 +114,7 @@ class Products with ChangeNotifier {
     }
   }
 
-  void deleteProduct(String id) {
+  Future<void> deleteProduct(String id) async {
     final url =
         'https://myshop-d6854-default-rtdb.firebaseio.com/products/$id.json';
     //optimistic deletingn
@@ -122,18 +123,13 @@ class Products with ChangeNotifier {
     _items.removeAt(existingProductIndex);
     notifyListeners();
     // from server
-    http.delete(url).then((response){
-      if(response.statusCode >= 400){
-        //code for error thrown
-      }
-      existingProduct = null;
-      //replacing the values again if deletion fails
-    }).catchError((_) {
+    final response = await http.delete(url);
+    if (response.statusCode >= 400) {
       _items.insert(existingProductIndex, existingProduct);
-    });
-
-    _items.removeWhere((prod) => prod.id == id);
-    notifyListeners();
+      //code for error thrown
+      throw HttpException('Could not Delete the Product');
+    }
+    existingProduct = null;
   }
 
   //fetching data from the server
