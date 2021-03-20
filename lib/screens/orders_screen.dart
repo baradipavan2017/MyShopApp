@@ -5,8 +5,25 @@ import 'package:provider/provider.dart';
 import '../widgets/order_item.dart';
 import '../providers/orders.dart' show Orders;
 
-class OrdersScreen extends StatelessWidget {
+class OrdersScreen extends StatefulWidget {
   static const routeName = '/orders_Screen';
+
+  @override
+  _OrdersScreenState createState() => _OrdersScreenState();
+}
+
+class _OrdersScreenState extends State<OrdersScreen> {
+  Future _ordersFuture;
+  Future _obtainOrderFuture() {
+    return Provider.of<Orders>(context, listen: false).fetchAndSetOrders();
+  }
+
+  @override
+  void initState() {
+    _ordersFuture = _obtainOrderFuture();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     print('building orders');
@@ -17,8 +34,7 @@ class OrdersScreen extends StatelessWidget {
         ),
         drawer: AppDrawer(),
         body: FutureBuilder(
-          future:
-              Provider.of<Orders>(context, listen: false).fetchAndSetOrders(),
+          future: _ordersFuture,
           builder: (ctx, dataSnapshot) {
             if (dataSnapshot.connectionState == ConnectionState.waiting) {
               return Center(
