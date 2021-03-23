@@ -73,6 +73,23 @@ class OrderButton extends StatefulWidget {
 
 class _OrderButtonState extends State<OrderButton> {
   var _isLoading = false;
+  void _showOrderDialog(String messgae) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Order Placed'),
+        content: Text(messgae),
+        actions: <Widget>[
+          FlatButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+              child: Text('OK'))
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return TextButton(
@@ -85,6 +102,7 @@ class _OrderButtonState extends State<OrderButton> {
               });
               await Provider.of<Orders>(context, listen: false).addOrder(
                   widget.cart.items.values.toList(), widget.cart.totalAmount);
+              _showOrderDialog('Order Places Successfully');
               setState(() {
                 _isLoading = false;
               });
