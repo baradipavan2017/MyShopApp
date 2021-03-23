@@ -41,6 +41,8 @@ class Products with ChangeNotifier {
   ];
 
   // var _showFavoritesOnly = false;
+  final String authToken;
+  Products(this.authToken, this._items);
 
   List<Product> get items {
     // if (_showFavoritesOnly) {
@@ -57,11 +59,49 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
+
+   //fetching data from the server
+  Future<void> fetchAndSetProducts() async {
+    final url =
+        'https://myshop-d6854-default-rtdb.firebaseio.com/products.json?auth=$authToken';
+    try {
+      //getting the data from url
+      final response = await http.get(url);
+      //extrating data from the map
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+
+      //converting dynamic data to lists
+      if (extractedData == null) {
+        return;
+      }
+      final List<Product> loadedProducts = [];
+      extractedData.forEach((prodId, prodData) {
+        loadedProducts.add(Product(
+          id: prodId,
+          title: prodData["title"],
+          description: prodData["description"],
+          imageUrl: prodData['imageUrl'],
+          price: prodData['price'],
+          isFavorite: prodData['isFavorite'],
+        ));
+      });
+      // initiating loaded data to items
+      _items = loadedProducts;
+      notifyListeners();
+      //to know hows it returns the values from server
+      print(json.decode(response.body));
+    } catch (error) {
+      print(error);
+      throw error;
+    }
+  }
+
+  
   //using async and await
   Future<void> addProduct(Product product) async {
     //initializing the url with /product folder
-    const url =
-        'https://myshop-d6854-default-rtdb.firebaseio.com/products.json';
+    final url =
+        'https://myshop-d6854-default-rtdb.firebaseio.com/products.json?auth=$authToken';
     //try catch block to find errors
     try {
       //post is to store data in server
@@ -101,7 +141,7 @@ class Products with ChangeNotifier {
     if (prodIndex >= 0) {
       //updating the product using patch using id of the product
       final url =
-          'https://myshop-d6854-default-rtdb.firebaseio.com/products/$id.json';
+          'https://myshop-d6854-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken';
       await http.patch(url,
           body: json.encode({
             'title': newProduct.title,
@@ -116,7 +156,7 @@ class Products with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final url =
-        'https://myshop-d6854-default-rtdb.firebaseio.com/products/$id.json';
+        'https://myshop-d6854-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken';
     //optimistic deletingn
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     var existingProduct = _items[existingProductIndex];
@@ -132,39 +172,5 @@ class Products with ChangeNotifier {
     existingProduct = null;
   }
 
-  //fetching data from the server
-  Future<void> fetchAndSetProducts() async {
-    const url =
-        'https://myshop-d6854-default-rtdb.firebaseio.com/products.json';
-    try {
-      //getting the data from url
-      final response = await http.get(url);
-      //extrating data from the map
-      final extractedData = json.decode(response.body) as Map<String, dynamic>;
-
-      //converting dynamic data to lists
-      if (extractedData == null) {
-        return;
-      }
-      final List<Product> loadedProducts = [];
-      extractedData.forEach((prodId, prodData) {
-        loadedProducts.add(Product(
-          id: prodId,
-          title: prodData["title"],
-          description: prodData["description"],
-          imageUrl: prodData['imageUrl'],
-          price: prodData['price'],
-          isFavorite: prodData['isFavorite'],
-        ));
-      });
-      // initiating loaded data to items
-      _items = loadedProducts;
-      notifyListeners();
-      //to know hows it returns the values from server
-      print(json.decode(response.body));
-    } catch (error) {
-      print(error);
-      throw error;
-    }
-  }
+ 
 }
