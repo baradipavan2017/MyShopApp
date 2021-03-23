@@ -1,5 +1,6 @@
 // GridTiles are made here and data is passed from here to product screen
 import 'package:flutter/material.dart';
+import 'package:myshop/providers/auth.dart';
 import 'package:provider/provider.dart';
 import '../providers/product.dart';
 import '../screens/product_detail_screen.dart';
@@ -15,6 +16,7 @@ class ProductItem extends StatelessWidget {
     //using provider class to send data
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
+    final authData = Provider.of<Auth>(context, listen: false);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -39,7 +41,7 @@ class ProductItem extends StatelessWidget {
                   product.isFavorite ? Icons.favorite : Icons.favorite_border),
               color: Theme.of(context).accentColor,
               onPressed: () {
-                product.toggleFavoriteStatus();
+                product.toggleFavoriteStatus(authData.token);
               },
             ),
           ),
@@ -52,7 +54,8 @@ class ProductItem extends StatelessWidget {
               onPressed: () {
                 cart.addItem(product.id, product.price, product.title);
                 ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
                     content: Text("Added item to cart"),
                     duration: Duration(seconds: 3),
                     action: SnackBarAction(
@@ -61,7 +64,8 @@ class ProductItem extends StatelessWidget {
                         cart.removeSingleItem(product.id);
                       },
                     ),
-                  ),);
+                  ),
+                );
               },
             ),
           ),

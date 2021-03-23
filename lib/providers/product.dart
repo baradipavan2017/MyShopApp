@@ -23,13 +23,13 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleFavoriteStatus() async {
+  Future<void> toggleFavoriteStatus(String token) async {
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
     try {
       final url =
-          'https://myshop-d6854-default-rtdb.firebaseio.com/products/$id.json';
+          'https://myshop-d6854-default-rtdb.firebaseio.com/products/$id.json?auth=$token';
       final response = await http.patch(
         url,
         body: json.encode(
