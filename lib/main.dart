@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
           update: (ctx, auth, previousProducts) => Products(
             auth.token,
             previousProducts == null ? [] : previousProducts.items,
+            auth.userId,
           ),
         ),
         ChangeNotifierProvider(
@@ -39,7 +40,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProxyProvider<Auth, Orders>(
           create: null,
           update: (ctx, auth, previousOrder) => Orders(
-              auth.token, previousOrder == null ? [] : previousOrder.orders,),
+            auth.token,
+            previousOrder == null ? [] : previousOrder.orders,
+          ),
         ),
       ],
       //to provide screen while login and after login use

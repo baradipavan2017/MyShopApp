@@ -12,6 +12,10 @@ class Auth with ChangeNotifier {
   bool get isAuth {
     return token != null;
   }
+  // User id 
+  String get userId {
+    return _userId;
+  }
 
   //validating token locally
   String get token {

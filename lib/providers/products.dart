@@ -42,7 +42,8 @@ class Products with ChangeNotifier {
 
   // var _showFavoritesOnly = false;
   final String authToken;
-  Products(this.authToken, this._items);
+  final String userId;
+  Products(this.authToken, this._items, this.userId);
 
   List<Product> get items {
     // if (_showFavoritesOnly) {
@@ -59,10 +60,9 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-
-   //fetching data from the server
+  //fetching data from the server
   Future<void> fetchAndSetProducts() async {
-    final url =
+    var url =
         'https://myshop-d6854-default-rtdb.firebaseio.com/products.json?auth=$authToken';
     try {
       //getting the data from url
@@ -74,6 +74,11 @@ class Products with ChangeNotifier {
       if (extractedData == null) {
         return;
       }
+      //making the favorite seperate form responsedata
+      url =
+          'https://myshop-d6854-default-rtdb.firebaseio.com/userFavorites/$userId.json?auth=$authToken';
+      final favoriteResponse = await http.get(url);
+      final favoriteData = json.decode(favoriteResponse.body);
       final List<Product> loadedProducts = [];
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
@@ -82,7 +87,8 @@ class Products with ChangeNotifier {
           description: prodData["description"],
           imageUrl: prodData['imageUrl'],
           price: prodData['price'],
-          isFavorite: prodData['isFavorite'],
+          isFavorite:
+              favoriteData == null ? false : favoriteData[prodId] ?? false,
         ));
       });
       // initiating loaded data to items
@@ -96,7 +102,6 @@ class Products with ChangeNotifier {
     }
   }
 
-  
   //using async and await
   Future<void> addProduct(Product product) async {
     //initializing the url with /product folder
@@ -114,7 +119,6 @@ class Products with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
-          'isFavorite': product.isFavorite,
         }),
       );
       //to know whats in the response
@@ -171,6 +175,4 @@ class Products with ChangeNotifier {
     }
     existingProduct = null;
   }
-
- 
 }
