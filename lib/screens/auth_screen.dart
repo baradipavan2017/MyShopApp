@@ -217,21 +217,17 @@ class _AuthCardState extends State<AuthCard>
         borderRadius: BorderRadius.circular(10.0),
       ),
       elevation: 8.0,
-      child: AnimatedBuilder(
-        animation: _heightAnimation,
-        builder: (ctx, ch) => Container(
-          //static mode
-          // height: _authMode == AuthMode.SignUp ? 340 : 260,
-          //dynamic animation
-          height: _heightAnimation.value.height,
+      //use animatecontiner if you wanna animate a container
+      child:  AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeIn,
+          height: _authMode == AuthMode.SignUp ? 320 : 260 ,
           width: deviceSize.width * 0.75,
           constraints: BoxConstraints(
-            minHeight: _heightAnimation.value.height,
+            minHeight: _authMode == AuthMode.SignUp ? 320 : 260 ,
           ),
           padding: EdgeInsets.all(20.0),
-          child: ch,
-        ),
-        child: Form(
+          child:Form(
           key: _formKey,
           child: SingleChildScrollView(
             child: Column(
