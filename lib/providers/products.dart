@@ -98,9 +98,9 @@ class Products with ChangeNotifier {
       _items = loadedProducts;
       notifyListeners();
       //to know hows it returns the values from server
-      print(json.decode(response.body));
+      // print(json.decode(response.body));
     } catch (error) {
-      print(error);
+      // print(error);
       throw error;
     }
   }
@@ -126,7 +126,7 @@ class Products with ChangeNotifier {
         }),
       );
       //to know whats in the response
-      print(json.decode(response.body));
+      // print(json.decode(response.body));
       final newProduct = Product(
         id: json.decode(response.body)['name'],
         title: product.title,
