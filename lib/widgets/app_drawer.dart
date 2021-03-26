@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// import 'package:myshop/helpers/custom_route.dart';
 import 'package:myshop/providers/auth.dart';
 import 'package:provider/provider.dart';
 import '../screens/user_producta_screen.dart';
@@ -28,6 +29,9 @@ class AppDrawer extends StatelessWidget {
               onTap: () {
                 Navigator.of(context)
                     .pushReplacementNamed(OrdersScreen.routeName);
+                    //custom names route for singlle page
+                // Navigator.of(context).pushReplacement(
+                //     CustomRoute(builder: (ctx) => OrdersScreen()));
               }),
           Divider(),
           ListTile(
